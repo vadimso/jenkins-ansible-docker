@@ -1,0 +1,20 @@
+- hosts: localhost
+  gather_facts: no
+  tasks:
+  - name: Copy files for custom Jenkins Docker image building
+    copy:
+      src: '{{item}}'
+      dest: './{{item}}'
+    loop:
+      - Dockerfile
+      - default-user.groovy
+      - plugins.txt
+  - name: Build the custom Jenkins Docker image
+    docker_image:
+      path: ./
+      name: jenkins/jenkins:lts
+  - name: Run Jenkins Docker image
+    docker_container:
+      name: jenkins
+      image: jenkins/jenkins:lts
+      published_ports: 8080:8080
